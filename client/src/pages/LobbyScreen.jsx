@@ -1,16 +1,26 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import { useSocket } from "../context/SocketProvider";
 
 const LobbyScreen = () => {
   const [email, setEmail] = useState("");
   const [room, setRoom] = useState("");
 
+  const socket = useSocket();
+
   const handleSubmitForm = useCallback(
     (e) => {
       e.preventDefault();
       console.log({ email, room });
+      socket.emit("room:join", { email, room });
     },
-    [email, room]
+    [email, room, socket]
   );
+
+  useEffect(() => {
+    socket.on("room:join", (data) => {
+      console.log(`Data form Backend ${data}`);
+    });
+  }, [socket]);
 
   return (
     <div>
