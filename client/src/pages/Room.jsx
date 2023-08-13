@@ -6,7 +6,8 @@ import peer from "../service/peer";
 const RoomPage = () => {
   const socket = useSocket();
   const [remoteSocketId, setRemoteSocketId] = useState(null);
-  const [myStream, setMyStream] = useState(null);
+  const [myStream, setMyStream] = useState();
+  const [remoteStream, setRemoteStream] = useState();
 
   const handleUserJoined = useCallback(({ email, id }) => {
     console.log(`Email ${email} joined room`);
@@ -35,9 +36,22 @@ const RoomPage = () => {
     socket.emit("call:accepted", { to: from, ans });
   }, []);
 
-  const handleCallAccepted = useCallback(({ from, ans }) => {
-    peer.setLocalDescription(ans);
-    console.log("Call Accepted");
+  const handleCallAccepted = useCallback(
+    ({ from, ans }) => {
+      peer.setLocalDescription(ans);
+      console.log("Call Accepted");
+      for (const track of myStream.getTracks()) {
+        peer.peer.addTrack(track, myStream);
+      }
+    },
+    [myStream]
+  );
+
+  useEffect(() => {
+    peer.peer.addEventListener("track", async (ev) => {
+      const remoteStream = ev.streams;
+      setRemoteStream(remoteStream);
+    });
   }, []);
 
   useEffect(() => {
@@ -59,6 +73,9 @@ const RoomPage = () => {
       {remoteSocketId && <button onClick={handleCallUSer}>CALL</button>}
       {myStream && (
         <ReactPlayer height="200px" width="200px" url={myStream} playing />
+      )}
+      {remoteStream && (
+        <ReactPlayer height="200px" width="200px" url={remoteStream} playing />
       )}
     </div>
   );
