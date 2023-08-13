@@ -50,9 +50,3 @@ To run the video calling application on your local machine, follow these steps:
 
 Make sure you have Node.js and npm (Node Package Manager) installed on your machine before running the application.
 
-
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-Feel free to explore, modify, and expand upon this video calling application. If you encounter any issues or have suggestions for improvement, please create an issue on this repository. Happy coding!
